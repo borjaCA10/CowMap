@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "713297858442",
+    "project_id": "cowmap-7f7d8",
+    "storage_bucket": "cowmap-7f7d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:713297858442:android:305f817548999e90bc8273",
+        "android_client_info": {
+          "package_name": "com.example.cowmap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "713297858442-j2j3qfec32oqml1mqvpangp2tr1d2bt3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYcK_boBW7lstJdQZ2JC2W85jG8IF32GM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "713297858442-j2j3qfec32oqml1mqvpangp2tr1d2bt3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
