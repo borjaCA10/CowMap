@@ -11,6 +11,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDLopYxEVpukXXuma5drmelBDYqOZW8w" />
+
+        <activity
+            android:name=".Map"
+            android:exported="false" />
         <activity
             android:name=".Crotales"
             android:exported="false" />

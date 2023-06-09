@@ -10,7 +10,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,6 +24,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Crotales extends AppCompatActivity {
 
@@ -39,13 +42,16 @@ public class Crotales extends AppCompatActivity {
 
     String res = "";
 
-    Button agregar;
+    ImageButton agregar;
 
-    Button borrar;
+    ImageButton borrar;
 
-    Button listar;
+    ImageButton listar;
 
     Button volver;
+
+    private List<Crotal> listCrotal = new ArrayList<Crotal>();
+    ArrayAdapter<Crotal> arrayAdapterCrotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +59,7 @@ public class Crotales extends AppCompatActivity {
         setContentView(R.layout.activity_crotales);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userId = user.getUid();
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Crotales");
         dbRef = userRef.child("CROTALES DE : " + userId);
         nombreVaca = findViewById(R.id.NombreVaca);
         CrotalVaca = findViewById(R.id.CrotalVaca);
@@ -66,51 +72,43 @@ public class Crotales extends AppCompatActivity {
         agregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (nombreVaca.getText().equals("") || CrotalVaca.getText().equals("")) {
-                    Crotal nuevocrotal = new Crotal(nombreVaca.getText().toString(), CrotalVaca.getText().toString());
+                Crotal nuevocrotal = new Crotal(nombreVaca.getText().toString(), CrotalVaca.getText().toString());
 
-                    dbRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            boolean numero1 = false;
-                            for (DataSnapshot ds : snapshot.getChildren()) {
-                                Crotal crotal = ds.getValue(Crotal.class);
-                                if (crotal.getCrotal().equals(nuevocrotal.getCrotal())) {
-                                    numero1 = true;
-                                    break;
-                                }
+                dbRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        boolean numero1 = false;
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            Crotal crotal = ds.getValue(Crotal.class);
+                            if (crotal.getCrotal().equals(nuevocrotal.getCrotal())) {
+                                numero1 = true;
+                                break;
                             }
-                            if (numero1) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(Crotales.this);
-                                builder.setTitle("GUARDADO INCORRECTO");
-                                builder.setMessage("HA SURGIDO UN ERROR, YA EXISTE EL MISMO CROTAL");
-                                builder.setPositiveButton("ACEPTAR", null);
-                                AlertDialog dialog = builder.create();
-                                dialog.show();
-                            } else {
-                                dbRef.push().setValue(nuevocrotal);
-                                AlertDialog.Builder builder = new AlertDialog.Builder(Crotales.this);
-                                builder.setTitle("GUARDADO CORRECTO");
-                                builder.setMessage("SE HA GUARDADO EL CROTAL EN NUESTRA BASE DE DATOS");
-                                builder.setPositiveButton("ACEPTAR", null);
-                                AlertDialog dialog = builder.create();
-                                dialog.show();
+                        }
+                        if (numero1) {
+                            Toast.makeText(Crotales.this, "YA EXISTE UN CROTAL CON ESE NOMBRE", Toast.LENGTH_SHORT).show();
+                            nombreVaca.setText(res);
+                            CrotalVaca.setText(res);
 
-                                nombreVaca.setText(res);
-                                CrotalVaca.setText(res);
+                        } else {
+                            dbRef.push().setValue(nuevocrotal);
+                            Toast.makeText(Crotales.this, "GUARDADO CORRECTO", Toast.LENGTH_SHORT).show();
+
+                            nombreVaca.setText(res);
+                            CrotalVaca.setText(res);
 
 
-                                finish();
-                            }
                             finish();
                         }
+                        finish();
+                    }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-                        }
-                    });
-                }
+                    }
+                });
+
             }
         });
 
@@ -125,6 +123,15 @@ public class Crotales extends AppCompatActivity {
                             clave = data.getKey();
                             dbRef.child(clave).removeValue();
                         }
+                        AlertDialog.Builder builder = new AlertDialog.Builder(Crotales.this);
+                        builder.setTitle("BORRADO CORRECTO");
+                        builder.setMessage("SE HA BORRADO TODOS LOS CROTALES CON NUMERO " + CrotalVaca.getText().toString());
+                        builder.setPositiveButton("ACEPTAR", null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                        CrotalVaca.setText(res);
+                        nombreVaca.setText(res);
                     }
 
                     @Override
@@ -141,14 +148,14 @@ public class Crotales extends AppCompatActivity {
                 dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayAdapter<String> adapter;
-                        ArrayList<String> listadoCrotales = new ArrayList<String>();
-                        for (DataSnapshot dp : snapshot.getChildren()) {
-                            crotales = dp.getValue(Crotal.class);
-                            listadoCrotales.add(crotales.getCrotal());
+                        listCrotal.clear();
+                        for(DataSnapshot ds: snapshot.getChildren()){
+                            Crotal c = ds.getValue(Crotal.class);
+                            listCrotal.add(c);
+
+                            arrayAdapterCrotal = new ArrayAdapter<Crotal>(Crotales.this, android.R.layout.simple_list_item_1,listCrotal);
+                            listadoVacas.setAdapter(arrayAdapterCrotal);
                         }
-                        adapter = new ArrayAdapter<>(Crotales.this, android.R.layout.simple_list_item_1, listadoCrotales);
-                        listadoVacas.setAdapter(adapter);
                     }
 
                     @Override

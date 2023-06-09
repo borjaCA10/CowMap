@@ -10,6 +10,8 @@ import android.widget.Button;
 public class Menu extends AppCompatActivity {
 Button crotales;
 Button cerrar;
+
+Button localizacion;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,6 +19,7 @@ Button cerrar;
 
         crotales= findViewById(R.id.crotales);
         cerrar = findViewById(R.id.volver);
+        localizacion = findViewById(R.id.locaclización);
 
         crotales.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,5 +36,14 @@ Button cerrar;
                 startActivity(cer);
             }
         });
+
+        localizacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent loc = new Intent(Menu.this, Map.class);
+                startActivity(loc);
+            }
+        });
     }
+
 }

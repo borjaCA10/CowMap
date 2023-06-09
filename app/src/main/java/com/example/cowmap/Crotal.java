@@ -34,9 +34,7 @@ public class Crotal implements Serializable {
 
     @Override
     public String toString() {
-        return "Crotal{" +
-                "nombre='" + nombre + '\'' +
-                ", crotal='" + crotal + '\'' +
-                '}';
+        return
+                crotal;
     }
 }
