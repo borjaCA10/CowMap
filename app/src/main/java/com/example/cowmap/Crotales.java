@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,6 +36,7 @@ public class Crotales extends AppCompatActivity {
     Crotal crotales;
 
     EditText CrotalVaca;
+    EditText latitud, longitud;
 
     ListView listadoVacas;
 
@@ -51,6 +53,8 @@ public class Crotales extends AppCompatActivity {
     Button volver;
 
     private List<Crotal> listCrotal = new ArrayList<Crotal>();
+
+    BaseDatos bd = new BaseDatos(Crotales.this);
     ArrayAdapter<Crotal> arrayAdapterCrotal;
 
     @Override
@@ -64,6 +68,8 @@ public class Crotales extends AppCompatActivity {
         nombreVaca = findViewById(R.id.NombreVaca);
         CrotalVaca = findViewById(R.id.CrotalVaca);
         listadoVacas = findViewById(R.id.ListadoVacas);
+        latitud = findViewById(R.id.Latitud);
+        longitud = findViewById(R.id.Longitud);
         agregar = findViewById(R.id.Agregar);
         borrar = findViewById(R.id.Borrar);
         listar = findViewById(R.id.Buscar);
@@ -72,7 +78,7 @@ public class Crotales extends AppCompatActivity {
         agregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Crotal nuevocrotal = new Crotal(nombreVaca.getText().toString(), CrotalVaca.getText().toString());
+                Crotal nuevocrotal = new Crotal(nombreVaca.getText().toString(), CrotalVaca.getText().toString(),latitud.getText().toString(),longitud.getText().toString());
 
                 dbRef.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -86,12 +92,16 @@ public class Crotales extends AppCompatActivity {
                             }
                         }
                         if (numero1) {
-                            Toast.makeText(Crotales.this, "YA EXISTE UN CROTAL CON ESE NOMBRE", Toast.LENGTH_SHORT).show();
                             nombreVaca.setText(res);
                             CrotalVaca.setText(res);
 
                         } else {
+                            bd.insertar(nombreVaca.getText().toString(),latitud.getText().toString(),longitud.getText().toString());
+
                             dbRef.push().setValue(nuevocrotal);
+
+
+
                             Toast.makeText(Crotales.this, "GUARDADO CORRECTO", Toast.LENGTH_SHORT).show();
 
                             nombreVaca.setText(res);
@@ -173,10 +183,20 @@ public class Crotales extends AppCompatActivity {
                 crotales = (Crotal) parent.getItemAtPosition(position);
                 nombreVaca.setText(crotales.getNombre());
                 CrotalVaca.setText(crotales.getCrotal());
+                latitud.setText(crotales.getLatitud());
+                longitud.setText(crotales.getLongitud());
 
             }
         });
 
+        volver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent volverAtras = new Intent(Crotales.this, Menu.class);
+
+                startActivity(volverAtras);
+            }
+        });
 
     }
 }
